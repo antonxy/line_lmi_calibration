@@ -4,3 +4,5 @@ opencv = dependency('opencv4', version : '>=4.0')
 
 executable('calibrate', ['src/calibration.cpp', 'src/calibrate.cpp'], dependencies : [opencv])
 executable('apply_calibration', ['src/calibration.cpp', 'src/apply_calibration.cpp'], dependencies : [opencv])
+
+executable('rescale', ['src/detect_lines.cpp', 'src/rescale.cpp', 'src/lines.cpp', 'src/test_rescale.cpp'], dependencies : [opencv])
