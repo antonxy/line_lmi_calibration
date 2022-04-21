@@ -75,7 +75,14 @@ std::vector<cv::Mat> calculateCalibrationFactors(std::span<cv::Mat> in_images, L
 
 		//Calculate mean of frame (only in the center of the image)
 		cv::Rect mean_roi = cv::Rect(cv::Point(image_size) / 2 - cv::Point(200, 200), cv::Size(400, 400));
-		float frame_mean = cv::mean(frame(mean_roi))[0];
+		//float frame_mean = cv::mean(frame(mean_roi))[0];
+		//Calculate mean only of bright pixels (part of the lines)
+		cv::Mat mean_mask;
+		cv::Mat t = (frame > 5.f);
+		t.convertTo(mean_mask, CV_32FC1);
+		cv::Mat masked_frame;
+		cv::multiply(frame, mean_mask, masked_frame);
+		float frame_mean = cv::sum(masked_frame(mean_roi))[0] / cv::sum(mean_mask(mean_roi))[0];
 		frame_means.push_back(frame_mean);
 
 		for (int y = 0; y < image_size.height; ++y) {

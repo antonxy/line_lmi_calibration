@@ -15,6 +15,8 @@ int main(int argc, char** argv) {
 	std::string calibration_filename;
 	std::string output_filename;
 	float blacklevel;
+	bool multiply_directions = false;
+	bool minimum_directions = false;
 
 	auto cli = (
 		option("-h", "--help").set(help) % "Show documentation." |
@@ -22,12 +24,13 @@ int main(int argc, char** argv) {
 			required("-b") & value("blacklevel", blacklevel),
 			required("-i") & value("images", images_filename),
 			required("-c") & value("calibration", calibration_filename),
-			option("-o") & value("output", output_filename)
+			option("-o") & value("output", output_filename),
+			(option("--mult").set(multiply_directions) | option("--min").set(minimum_directions))
 		)
 	);
 
 	auto fmt = doc_formatting{}.doc_column(30);
-	const char* exe_name = "calibrate";
+	const char* exe_name = "apply_calibration";
 	parsing_result parse_result = parse(argc, argv, cli);
 	if (!parse_result) {
 		std::cerr << "Invalid arguments. See arguments below or use " << exe_name << " -h for more info\n";

@@ -120,8 +120,13 @@ int main(int argc, char** argv) {
 	std::vector<std::array<cv::Point, 3>> line_defining_points(num_directions);
 	if (points == "") {
 		for (int direction_idx = 0; direction_idx < num_directions; ++direction_idx) {
-			line_defining_points.at(direction_idx) = clickPoints(in_images.at(direction_idx * num_images));
+			auto clicked_points = clickPoints(in_images.at(direction_idx * num_images));
+			line_defining_points.at(direction_idx) = clicked_points;
+			for (int i = 0; i < 3; ++i) {
+				std::cout << clicked_points.at(i).x << "," << clicked_points.at(i).y << ";";
+			}
 		}
+		std::cout << std::endl;
 	} else {
 		auto ps = parsePoints(points);
 		if (ps.size() != num_directions * 3) {
@@ -154,7 +159,9 @@ int main(int argc, char** argv) {
 				mip = cv::max(calibrated_frame, mip);
 			}
 		}
-		cv::imshow("MIP", mip / 10.f);
+		std::stringstream ss;
+		ss << direction_idx << "MIP";
+		cv::imshow(ss.str().c_str(), mip / 10.f);
 
 		std::copy(calibration_factors.begin(), calibration_factors.end(), std::back_inserter(all_calibration_factors));
 	}
