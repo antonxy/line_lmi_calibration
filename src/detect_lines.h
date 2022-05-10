@@ -1,4 +1,4 @@
 #pragma once
 #include "lines.h"
 
-Lines detect_lines(cv::Mat image);
+MultiLine detect_lines(cv::Mat image);
