@@ -72,10 +72,14 @@ int main(int argc, char** argv) {
 
 
 	// Load input images
-	cv::Mat image_u16 = cv::imread(filename);
-
-	if (image_u16.empty()) {
-		std::cerr << "Could not load file" << std::endl;
+	cv::Mat image_u16;
+	{
+		std::vector<cv::Mat> read_images;
+		if (!cv::imreadmulti(filename, read_images, cv::IMREAD_GRAYSCALE | cv::IMREAD_ANYDEPTH)) {
+			std::cerr << "Could not read images " << filename << std::endl;
+			return 2;
+		}
+		image_u16 = read_images.at(0);
 	}
 
 	cv::Mat image;
@@ -83,10 +87,10 @@ int main(int argc, char** argv) {
 
 	double min, max;
 	cv::minMaxLoc(image, &min, &max);
-	cv::Mat image_norm = image / max;
+	image /= max;
 
 	//Select or parse line defining points
-	std::array<cv::Point, 3> line_defining_points = clickPoints(image_norm * 255 * exposure_scale);
+	std::array<cv::Point, 3> line_defining_points = clickPoints(image * 255.f * exposure_scale);
 	for (int i = 0; i < 3; ++i) {
 		std::cout << line_defining_points[i].x << "," << line_defining_points[i].y;
 		if (i != 2) {
